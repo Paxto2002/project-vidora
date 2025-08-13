@@ -1,0 +1,16 @@
+{
+  "name": "vidora",
+  "version": "1.0.0",
+  "description": "A next-generation video streaming platform where creators can upload, share, and watch videos with a sleek, YouTube-like experience powered by modern web technologies.",
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Waseem",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
