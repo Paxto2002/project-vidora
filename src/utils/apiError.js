@@ -1,3 +1,4 @@
+// src/utils/apiError.js
 class ApiError extends Error {
   constructor(
     statusCode,

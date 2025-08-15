@@ -1,3 +1,5 @@
+// src/index.js
+
 // require("dotenv").config({ path: "../.env" });  // old way
 // req.params ==> whenever an data that comes from the URL, it come from req.params
 // request.body ==> data which is coming in the form of JSON, forms, so for that there are come configurations which come from req.body
