@@ -1,3 +1,4 @@
+//src/routes/user.route.js
 import { Router } from "express";
 import { registerUser } from "../controllers/user.controller.js";
 
