@@ -13,3 +13,5 @@ class apiResponse {
     this.success = statusCode >= 200 && statusCode < 400 ? success : false;
   }
 }
+
+export { apiResponse };

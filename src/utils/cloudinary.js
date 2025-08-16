@@ -14,7 +14,7 @@ const uploadOnCloudinary = async (localFilePath) => {
       throw new Error("No file path provided for upload.");
     }
     // upload the file to Cloudinary
-    const response = await cloudinary.v2.uploader.upload(localFilePath, {
+    const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
     });
     // File has been uploaded successfully
@@ -22,5 +22,13 @@ const uploadOnCloudinary = async (localFilePath) => {
     return response;
   } catch (error) {
     fs.unlinkSync(localFilePath); // remove the locally saved temp file as the upload operation got failed
+    return {
+      success: false,
+      message: "Failed to upload file to Cloudinary.",
+      error: error.message,
+    };
   }
 };
+
+export { uploadOnCloudinary };
+export default cloudinary;
