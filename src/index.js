@@ -4,22 +4,20 @@
 // req.params ==> whenever an data that comes from the URL, it come from req.params
 // request.body ==> data which is coming in the form of JSON, forms, so for that there are come configurations which come from req.body
 import dotenv from "dotenv";
-dotenv.config({ path: "../.env" }); // Load environment variables from .env file
 import connectDB from "./db/index.js";
-import app from "./app.js";
+import { app } from "./app.js";
+dotenv.config({
+  path: "./.env",
+});
 
 connectDB()
   .then(() => {
-    app.on("error", (err) => {
-      console.log("Error: ", err);
-      throw err;
-    });
-    app.listen(process.env.PORT || 3000, () => {
-      console.log(`Server is running on port ${process.env.PORT || 3000}`);
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
     });
   })
   .catch((err) => {
-    console.log("MongoDB connection error:", err);
+    console.log("MONGO db connection failed !!! ", err);
   });
 
 /*

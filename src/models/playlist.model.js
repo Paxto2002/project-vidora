@@ -1,3 +1,5 @@
+// src/models/playlist.model.js
+
 import mongoose, { Schema } from "mongoose";
 
 const playlistSchema = new Schema(

@@ -1,3 +1,4 @@
+// src/models/tweet.model.js
 import mongoose, { Schema } from "mongoose";
 
 const tweetSchema = new Schema(
