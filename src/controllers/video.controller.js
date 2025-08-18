@@ -1,9 +1,9 @@
 import mongoose, { isValidObjectId } from "mongoose";
-import { Video } from "../models/video.model.js";
-import { User } from "../models/user.model.js";
-import { ApiError } from "../utils/apiError.js";
-import { ApiResponse } from "../utils/apiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import Video from "../models/video.model.js";
+import User from "../models/user.model.js";
+import apiError from "../utils/apiError.js";
+import apiResponse from "../utils/apiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // Get all videos with pagination, search, sorting
@@ -41,7 +41,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const totalVideos = await Video.countDocuments(filter);
 
   return res.status(200).json(
-    new ApiResponse(200, {
+    new apiResponse(200, {
       total: totalVideos,
       page,
       limit,
@@ -55,11 +55,11 @@ const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
 
   if (!title || !description) {
-    throw new ApiError(400, "Title and description are required");
+    throw new apiError(400, "Title and description are required");
   }
 
   if (!req.files?.videoFile?.[0]) {
-    throw new ApiError(400, "Video file is required");
+    throw new apiError(400, "Video file is required");
   }
 
   // upload video and thumbnail to cloudinary
@@ -87,7 +87,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, video, "Video published successfully"));
+    .json(new apiResponse(201, video, "Video published successfully"));
 });
 
 // Get a video by ID
@@ -95,7 +95,7 @@ const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
   if (!isValidObjectId(videoId)) {
-    throw new ApiError(400, "Invalid video id");
+    throw new apiError(400, "Invalid video id");
   }
 
   const video = await Video.findById(videoId).populate(
@@ -104,10 +104,10 @@ const getVideoById = asyncHandler(async (req, res) => {
   );
 
   if (!video) {
-    throw new ApiError(404, "Video not found");
+    throw new apiError(404, "Video not found");
   }
 
-  return res.status(200).json(new ApiResponse(200, video));
+  return res.status(200).json(new apiResponse(200, video));
 });
 
 // Update video details
@@ -116,7 +116,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
 
   if (!isValidObjectId(videoId)) {
-    throw new ApiError(400, "Invalid video id");
+    throw new apiError(400, "Invalid video id");
   }
 
   const updates = {};
@@ -138,12 +138,12 @@ const updateVideo = asyncHandler(async (req, res) => {
   );
 
   if (!video) {
-    throw new ApiError(404, "Video not found or not authorized");
+    throw new apiError(404, "Video not found or not authorized");
   }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, video, "Video updated successfully"));
+    .json(new apiResponse(200, video, "Video updated successfully"));
 });
 
 // Delete a video
@@ -151,7 +151,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
   if (!isValidObjectId(videoId)) {
-    throw new ApiError(400, "Invalid video id");
+    throw new apiError(400, "Invalid video id");
   }
 
   const video = await Video.findOneAndDelete({
@@ -160,12 +160,12 @@ const deleteVideo = asyncHandler(async (req, res) => {
   });
 
   if (!video) {
-    throw new ApiError(404, "Video not found or not authorized");
+    throw new apiError(404, "Video not found or not authorized");
   }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Video deleted successfully"));
+    .json(new apiResponse(200, {}, "Video deleted successfully"));
 });
 
 // Toggle publish status (public/private)
@@ -173,13 +173,13 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
   if (!isValidObjectId(videoId)) {
-    throw new ApiError(400, "Invalid video id");
+    throw new apiError(400, "Invalid video id");
   }
 
   const video = await Video.findOne({ _id: videoId, owner: req.user?._id });
 
   if (!video) {
-    throw new ApiError(404, "Video not found or not authorized");
+    throw new apiError(404, "Video not found or not authorized");
   }
 
   video.isPublished = !video.isPublished;
@@ -187,7 +187,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, video, "Video publish status toggled"));
+    .json(new apiResponse(200, video, "Video publish status toggled"));
 });
 
 export {

@@ -2,9 +2,9 @@
 import mongoose from "mongoose";
 import { Comment } from "../models/comment.model.js";
 import Video from "../models/video.model.js";
-import { ApiError } from "../utils/apiError.js";
-import { ApiResponse } from "../utils/apiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import apiError from "../utils/apiError.js";
+import apiResponse from "../utils/apiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 /**
  * GET: All comments for a video (with pagination)
@@ -14,12 +14,12 @@ const getVideoComments = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
 
   if (!mongoose.Types.ObjectId.isValid(videoId)) {
-    throw new ApiError(400, "Invalid video ID");
+    throw new apiError(400, "Invalid video ID");
   }
 
   // Ensure video exists
   const video = await Video.findById(videoId);
-  if (!video) throw new ApiError(404, "Video not found");
+  if (!video) throw new apiError(404, "Video not found");
 
   const commentsAggregate = Comment.aggregate([
     { $match: { video: new mongoose.Types.ObjectId(videoId) } },
@@ -45,7 +45,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, result, "Comments fetched successfully"));
+    .json(new apiResponse(200, result, "Comments fetched successfully"));
 });
 
 /**
@@ -57,12 +57,12 @@ const addComment = asyncHandler(async (req, res) => {
   const userId = req.user?._id; // Assuming auth middleware sets req.user
 
   if (!mongoose.Types.ObjectId.isValid(videoId)) {
-    throw new ApiError(400, "Invalid video ID");
+    throw new apiError(400, "Invalid video ID");
   }
-  if (!content?.trim()) throw new ApiError(400, "Comment content is required");
+  if (!content?.trim()) throw new apiError(400, "Comment content is required");
 
   const video = await Video.findById(videoId);
-  if (!video) throw new ApiError(404, "Video not found");
+  if (!video) throw new apiError(404, "Video not found");
 
   const comment = await Comment.create({
     content,
@@ -72,7 +72,7 @@ const addComment = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, comment, "Comment added successfully"));
+    .json(new apiResponse(201, comment, "Comment added successfully"));
 });
 
 /**
@@ -84,15 +84,15 @@ const updateComment = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(commentId)) {
-    throw new ApiError(400, "Invalid comment ID");
+    throw new apiError(400, "Invalid comment ID");
   }
-  if (!content?.trim()) throw new ApiError(400, "Updated content is required");
+  if (!content?.trim()) throw new apiError(400, "Updated content is required");
 
   const comment = await Comment.findById(commentId);
-  if (!comment) throw new ApiError(404, "Comment not found");
+  if (!comment) throw new apiError(404, "Comment not found");
 
   if (comment.owner.toString() !== userId.toString()) {
-    throw new ApiError(403, "You are not allowed to edit this comment");
+    throw new apiError(403, "You are not allowed to edit this comment");
   }
 
   comment.content = content;
@@ -100,7 +100,7 @@ const updateComment = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, comment, "Comment updated successfully"));
+    .json(new apiResponse(200, comment, "Comment updated successfully"));
 });
 
 /**
@@ -111,21 +111,21 @@ const deleteComment = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
   if (!mongoose.Types.ObjectId.isValid(commentId)) {
-    throw new ApiError(400, "Invalid comment ID");
+    throw new apiError(400, "Invalid comment ID");
   }
 
   const comment = await Comment.findById(commentId);
-  if (!comment) throw new ApiError(404, "Comment not found");
+  if (!comment) throw new apiError(404, "Comment not found");
 
   if (comment.owner.toString() !== userId.toString()) {
-    throw new ApiError(403, "You are not allowed to delete this comment");
+    throw new apiError(403, "You are not allowed to delete this comment");
   }
 
   await comment.deleteOne();
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Comment deleted successfully"));
+    .json(new apiResponse(200, {}, "Comment deleted successfully"));
 });
 
 export { getVideoComments, addComment, updateComment, deleteComment };
